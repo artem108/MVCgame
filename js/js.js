@@ -1,18 +1,15 @@
 var view = {
 
-	// Функция showCount() - отображает на странице счет игрока
 	showCount: function (count) {
 		var elCount = document.getElementById("area_game__user_count--total");
 		elCount.innerHTML = count;
 	},
 
-	// Функция showMsg() - отображает на странице сообщение
 	showMsg: function (msg) {
 		var elMessage = document.getElementById("area_game__user-message--msg");
 		elMessage.innerHTML = msg;
 	},
 
-	// Функция showShip() - отображает на странице корабль (синий или красный)
 	showShip: function (id, color) {
 		var elShip = document.getElementById(id);
 		if (color == "red") {
@@ -22,13 +19,11 @@ var view = {
 		}
 	},
 
-	// Функция showAsteroid() - если игрок промахнулся, отображает астероид
 	showAsteroid: function (id) {
 		var elAsteroid = document.getElementById(id);
 		elAsteroid.setAttribute("class", "asteroid");
 	},
 
-	// Функция soundShot() - звук выстрела
 	soundShot: function () {
 		var audio = document.getElementsByTagName("audio")[0];
 
@@ -39,11 +34,6 @@ var view = {
 		}, 20);
 		// audio.play();
 	}
-
-	// Future method winner sound
-	// winner: function () {
-	//
-	// }
 };
 
 /* ----------------------------- end view ------------------------------ */
@@ -52,10 +42,10 @@ var view = {
 /* ---------------------------- begin model ---------------------------- */
 
 var model = {
-	sizeSpace: 	  7,	// Размер карты
-	numShips: 	  6,	// Кол-во флотилий
-	lengthShips:  3,	// Размеры флотилии
-	destroyShips: 0,	// Уничтоженные флотилии
+	sizeSpace: 	  7,
+	numShips: 	  6,
+	lengthShips:  3,
+	destroyShips: 0,
 
 	spaceships: [
 		{ position: ["0", "0", "0"], damage: ["", "", ""], color: "red"  },
@@ -66,7 +56,6 @@ var model = {
 		{ position: ["0", "0", "0"], damage: ["", "", ""], color: "blue" }
 	],
 
-	// Функция shot() - производит выстрел и проверку на попадание
 	shot: function (id) {
 		for (var i = 0; i < this.numShips; i++) {
 			var spaceship = this.spaceships[i];
@@ -98,7 +87,6 @@ var model = {
 		return id;
 	},
 
-	// Функция checkDestoyedShip() - проверяет полностью подбиты три корабля
 	checkDestroyedShip: function (ship) {
 		for (var i = 0; i < this.lengthShips; i++) {
 			if (ship.damage[i] === "") {
@@ -108,7 +96,6 @@ var model = {
 		return true;
 	},
 
-	// Функция createShipPos() - создадим позицию корабля (вертикальную или горизонтальную - наугад)
 	createShipPos: function () {
 		var col = 0;
 		var row = 0;
@@ -133,7 +120,6 @@ var model = {
 		return shipPosition;
 	},
 
-	// Функция checkRepeatsPos() - корабли не накладывались друг на друга и не пересекались
 	checkRepeatsPos: function (position) {
 		for (var i = 0; i < this.numShips; i++) {
 			var spaceship = this.spaceships[i];
@@ -146,12 +132,6 @@ var model = {
 		return false;
 	},
 
-	/*
-		Функция createSpaceships() - объединяет в себе две другие функции: createShipPos() и checkRepeatsPos(),
-		для того что бы сгенерировать полностью корабли в массиве "spaceships[]"
-		Функция генерирует позицию для будущего корабля, затем проверяет свободны ли данные позиции, потом добавляет
-		эту позицию в массив "spaceships"
-	*/
 	createSpaceships: function () {
 		var position;
 		for (var i = 0; i < this.numShips; i++) {
@@ -172,15 +152,12 @@ var model = {
 
 var controller = {
 
-	// Количество выстрелов
 	numShots: 0,
 
-	// Сгенерировать корабли
 	createShips: function () {
 		model.createSpaceships();
 	},
 
-	// Функция shotShip() - соединяет в себе вызов методов из объектов "model", "view"
 	shotShip: function (c) {
 		var id = this.convertToID(c);
 
@@ -208,7 +185,6 @@ var controller = {
 		}
 	},
 
-	// Функция convertToID() - переводит координаты типа (А2) в id(02)
 	convertToID: function (c) {
 		var symbol = ["A", "B", "C", "D", "E", "F", "G"];
 
@@ -233,30 +209,18 @@ var controller = {
 		return null;
 	},
 
-	// Функция isNumeric() - нужна для определения переменной на число
 	isNumeric: function (n) {
 		return !isNaN(parseFloat(n)) && isFinite(n);
 	},
 
-	/*
-		Функция hoverClick() - при наведении курсора на элемент ячейки таблицы меняет стиль, убирает стиль.
-		Также регистрирует тип события "onclick" на наведенном элементе, полученного от типа события "onmouseover"
-	*/
 	hoverClick: function (id) {
 		var el = document.getElementById(id);
 		el.onmouseover = function (e) {
 			e = e || window.event;
-			// console.log(e.target);
-			// console.log(this);
-			// console.log(el);
 
 			if (e.target.id !== "") {
 				e.target.style.transition = "0.5s";
 				e.target.style.backgroundColor = "rgba(104, 142, 218, 0.33)";
-
-			// Присвоить функцию свойству onclick (тип события) элемента td.
-			// Функция - обработчик события: она вызывается, когда пользователь нажмет на ячейку таблицы.
-			// Все объекты событий имеют свойство type, определяющее тип события, и свойство target, определяющее цель события.
 
 				e.target.onclick = function () {
 					var c = this.getAttribute("data-title");
@@ -273,12 +237,6 @@ var controller = {
 		};
 	},
 
-	/*
-		Данная функция создает для ячеек таблицы (td - кроме 1 столбца и 1 ряда) data-title атрибут
-		нужна для того что бы можно было воспользоваться функцией "hoverClick()"
-		Получим все теги "td" и поместим в переменную "elCell". Установим новый атрибут "data-title"
-		удовлетворяющим нашим условиям и поместим значения типа "А0"
-	*/
 	createDataTitle: function () {
 		var elCell = document.getElementsByTagName("td");
 		for (var i = 0; i < elCell.length; i++) {
@@ -292,8 +250,6 @@ var controller = {
 		};
 	},
 
-	// Обработчик события - браузер вызовет функцию "hBtnClick" когда возникнет событие "onclick"
-	// Функция hBtnClick() - вызовет метод shotShip() объекта "controller"
 	hBtnClick: function () {
 		var el = document.getElementById("crdInput");
 		var elValueUp = el.value.toUpperCase();
@@ -303,9 +259,6 @@ var controller = {
 		el.value = "";
 	},
 
-	// Обработчик события - браузер вызовет функцию "hKeyPress" когда возникнет событие "onkeypress"
-	// объектом события является "e" - содержит всю информацию об этом событии
-	// Когда пользователь нажмет на клавишу "enter" сработает функция hBtnClick()
 	hKeyPress: function (e) {
 		e = e || window.event;
 
@@ -335,45 +288,31 @@ var controller = {
 			this.event();
 		},
 
-		// main() - Основной код для проекта, например подключать и настраивать плагины и т.д
 		main: function () {
 
 		},
 
-		// control() - Запускаем необходимые методы объекта "controller"
 		control: function () {
 
-			// Генерируем позиции кораблей и помещаем в массив spaceships
 			controller.createShips();
-			// Создаем атрибут (data-title) для ячеек td (кроме 1 столбца и 1 ряда)
 			controller.createDataTitle();
 
 
 		},
 
-		// event() - Здесь мы регистрируем, вызываем "Обработчики событий"
 		event: function () {
 
 			var btnShot = document.getElementById("btnShot");
-			// Регистрируем обработчик события "тип события: onclick", "цель события: элемент с id btnShot",
-			// "обработчик события: hBtnClick()"
 			btnShot.onclick = controller.hBtnClick;
 
 			var elCrdInput = document.getElementById("crdInput");
 			elCrdInput.onkeypress = controller.hKeyPress;
 
-			/*
-				Вызываем метод "hoverClick()" объекта "controller".
-				Метод "hoverClick()" также относиться к обработчику события. Внутри данного метода уже содержаться обработчики событий.
-			*/
 			controller.hoverClick("area_game__table");
 
 		}
 
 	};
-
-	// запускаем init() - выполняет запуск всего кода
 	start.init();
 
 }());
-/* --------------------- anonymous initialize function ----------------- */
